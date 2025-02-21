@@ -150,13 +150,6 @@ def initialize(filename, operating_system="linux", arch="64"):
 
 # pick up the correct config file depending on operating system
 PULPCFGFILE = "pulp.cfg"
-is_64bits = sys.maxsize > 2**32
-if is_64bits:
-    arch = "64"
-    if platform.machine().lower() in ["aarch64", "arm64"]:
-        arch = "arm64"
-else:
-    arch = "32"
 operating_system = None
 if sys.platform in ["win32", "cli"]:
     operating_system = "win"
@@ -167,6 +160,14 @@ elif sys.platform in ["darwin"]:
 else:
     operating_system = "linux"
     PULPCFGFILE += ".linux"
+
+is_64bits = sys.maxsize > 2**32
+if is_64bits:
+    arch = "64"
+    if operating_system == "linux" and platform.machine().lower() in ["aarch64", "arm64"]:
+        arch = "arm64"
+else:
+    arch = "32"
 
 DIRNAME = os.path.dirname(__file__)
 config_filename = os.path.normpath(os.path.join(DIRNAME, "..", PULPCFGFILE))
